@@ -121,93 +121,7 @@ More specifically, `Num` is a `type class`.
 The `class` here doesn't mean a `class` like in an object-oriented language, but rather a `class` as in a `classification`.
 `(+)` can thus be said to work for *all types classified as Numbers*.
 We'll talk about this in *much* more depth later.
-But, for now, let's move onto something else.
-
-## Lists
-
-Well, hey, just adding numbers is boring.
-Let's try to use another, more fundamental datatype: a *List*.
-You know about Lists.
-You might have used the `ArrayList` class, or written a Linked List.
-Either way, we know that a `List` works like this:
-
-1. We have zero or more elements
-2. The elements are in some order
-
-That's basically it.
-In Haskell, we write a list like this:
-
-```haskell
-list = [1, 2, 3, 4, 5]
-```
-
-This is quite simple.
-Let's try some things out.
-
-### Exploring lists
-
-Load up GHCI again.
-First off, type this:
-
-```haskell
-list = [1, 2, 3, 4, 5]
-```
-
-This will let us work with one common list for all our functions.
-First up, we have the `head` function:
-
-```ghci
-> head list
--- 1
-```
-
-`head` returns the first element of the given list.
-But, wait a minute.
-What's the type of `head`?
-Well, let's check it:
-
-```ghci
-> :t head
--- head :: [a] -> a
-```
-
-In Haskell, *all* types start with a capital letter.
-So, what's that lowercase `a` doing there?
-Well, that `a` is a *type variable*.
-You can think of it as being kind of akin to a template parameter.
-It means that we can put in any type, and it'll work.
-For example, when we write `head list`, we are using the `head` function that has a type of:
-
-```haskell
-head :: [Int] -> Int
-```
-
-We could also do:
-
-```haskell
-head [True, True, False]
-```
-
-In this case, `head` has the type:
-
-```haskell
-head :: [Bool] -> Bool
-```
-
-This is quite useful!
-It means that we can write functions that work on a list, *without knowing what's in the list*.
-
-Let's try some more functions:
-
-```ghci
-> tail list
--- [2, 3, 4, 5]
-```
-
-`tail` returns everything that isn't the `head`.
-It's pretty simple.
-There's quite a number of functions that work with lists, but it'd be boring to explore them all.
-Instead, let's go and write a function of our own.
+But, for now, let's get to writing functions of our own.
 
 ### Mapping
 
@@ -271,3 +185,10 @@ addTwo(x) = x + 2
 The Haskell definition is *near-identical* because it's doing the same thing.
 You're writing what the function *is* as opposed to what it *does*.
 This is a very useful way of thinking about things, as it turns out.
+
+
+### Exercises
+
+1. Write a function that doubles any input number.
+2. Write a function that triples any input number.
+
