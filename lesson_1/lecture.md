@@ -190,8 +190,6 @@ This is a very useful way of thinking about things, as it turns out.
 
 1. Write a function that doubles any input number.
 2. Write a function that triples any input number.
-3. Write a factorial function (you will need to use recursion for this!)
-
 
 ## Guard Syntax
 Let's say we want to use a conditional expression in Haskell.

@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" href="/css/svg-icons.css">
+    <link rel="stylesheet" href="/css/webslides.css">
+    <link rel="stylesheet" href="/css/prism.css">
+	</head>
+	<body>
+    <script src="/js/webslides.min.js"></script>
+    <script src="/js/svg-icons.js"></script>
+    <script src="/js/prism.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        processEscapes: true
+      });
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    <article id="webslides">
+
+      <section>
+        <h1>Functional Course, Lession 1</h1>
+        <h5>Or, how you too can become an insufferable Haskell nerd</h5>
+      </section>
+      <section class="bg-primary slide-top bg-gradient-v">
+        <h1>Motivation</h1>
+        <ul class="incremental">
+          <li class="incremental">
+            <h4>Software Engineering is Hard</h4>
+            <ul>
+              <li>Edge Cases</li>
+              <li>Team Communication</li>
+              <li>Concurrency</li>
+              <li>Maintainence</li>
+            </ul>
+          </li>
+          <li class="incremental">
+            <h4>Haskell Can Help</h4>
+            <ul>
+              <li>Concurrency is near-trivial</li>
+              <li>Extreme type safety</li>
+              <li>Very expressive</li>
+            </ul>
+          </li>
+          <li>
+              <h4>Haskell Is Worth It</h4>
+            </li>
+        </ul>
+      </section>
+      <section class="bg-primary">
+        <h1>What does this funciton do?</h1>
+        <pre>
+          <code class="language-java">
+            class House {
+              public House applyPainting(Color color, GlossType gloss) {
+                // ...
+              }
+            }
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary slide-top">
+        <h2>Does it...</h2>
+        <ul class="flexblock specs">
+          <li><h5>Modify House and return itself, or make a new house that's painted?</h5></li>
+          <li><h5>Ever return null?</h5></li>
+          <li><h5>Handle Nulls in any arguments?</h5></li>
+          <li><h5>Modify any static variables?</h5></li>
+          <li><h5>Log anything?</h5></li>
+          <li><h5>Throw exceptions?</h5></li>
+        </ul>
+      </section>
+      <section class="bg-primary">
+        <h2>In Haskell</h2>
+        <pre>
+          <code class="language-haskell">
+            applyPaint :: Color -> Gloss -> House -> House
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary slide-top">
+        <h2>This...</h2>
+        <ul class="flexblock specs">
+          <li><h5>Can never modify the passed-in house</h5></li>
+          <li><h5>Can never return null</h5></li>
+          <li><h5>Can never be passed a null</h5></li>
+          <li><h5>Can never modify any global variables</h5></li>
+          <li><h5>Can never log anything</h5></li>
+          <li><h5>Might throw exceptions, but it's very unlikely</h5></li>
+        </ul>
+      </section>
+      <section class="bg-apple">
+        <h1>One more thing...</h1>
+        <pre>
+          <code class="language-haskell">
+            applyGlossyBluePaint :: House -> House
+            applyGlossyBluePaint = applyPaint BlueColor HighGloss
+          </code>
+        </pre>
+        <p>We now have another function that applies glossy blue paint to any house!</p>
+      </section>
+      <section class="bg-secondary">
+        <h1>Using some functions</h1>
+        <h5>Spin up GHCI and type...</h5>
+        <pre>
+          <code class="language-haskell">
+            1 + 2
+            -- = 3
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary">
+        <span class="text-intro">Addition is
+          <code class="language-haskell">(+) :: Int -> Int -> Int</code>
+        </span>
+      </section>
+      <section class="bg-secondary">
+        <span class="text-intro">Using more functions</span>
+        <pre>
+          <code class="language-haskell">
+            1.5 + 2.5
+            -- 3
+          </code>
+        </pre>
+      </section>
+      <section class="bg-primary">
+        <h1>I lied?</h1>
+        <span class="text-intro">
+          Type <code>:t (+)</code> to see the real type
+        </span>
+      </section>
+      <section class="bg-secondary">
+          <span class="text-context">
+            Something for later
+          </span>
+          <span class="text-intro">Addition is
+            <code class="language-haskell">(+) :: (Num a) => a -> a -> a</code>
+          </span>
+      </section>
+      <section class="bg-primary slide-top">
+        <h2>Writing a function</h2>
+        <pre>
+            <code class="language-haskell">
+              addTwo x = x + 2
+            </code>
+          </pre>
+      </section>
+      <section class="bg-primary">
+        <h3>Wow!</h3>
+        <ul class="flexblock features">
+          <li>
+            <div>
+              <h2><span>No</span> explicit types</h2>
+              Haskell infers them for us
+            </div>
+          </li>
+          <li>
+            <div>
+                <h2><span>What</span> not how</h2>
+                No need for returns
+            </div>
+          </li>
+          <li>
+            <div>
+              <h2><span>Clean</span> definitions</h2>
+              No brackets, no parens, just an equals sign
+            </div>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>Exercises</h3>
+        <div class="wrap">
+          <div class="grid vertial-align">
+            <div class="column">
+              \( f(x) = x \times 2 \)
+            </div>
+            <div class="column">
+              \( f(x) = x^2 + 2x + 1 \)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <div class="wrap">
+          <div class="grid vertical-align">
+            <div class="column">
+              \(
+                f(x) =
+                  \begin{cases}
+                    1 & \text{if } x = 1\\
+                    0 & \text{otherwise}
+                  \end{cases}
+              \)
+            </div>
+            <div class="column">
+              <pre>
+                <code class="language-haskell">
+                  f x =
+                    | x == 1 = 1
+                    | otherwise = 0
+                </code>
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </article>
+		<script>
+			window.ws = new WebSlides()
+		</script>
+	</body>
+</html>
