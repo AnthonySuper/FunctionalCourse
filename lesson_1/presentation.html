@@ -181,34 +181,378 @@
             <div class="column">
               \( f(x) = x^2 + 2x + 1 \)
             </div>
+            <div class="column">
+              \( f(x, y) = xy + 2x + 2y + 1 \)
+            </div>
           </div>
         </div>
       </section>
       <section class="bg-primary">
+        <h2>Conditionals</h2>
+        <div class="grid sm">
+          <div class="column">
+            <ul>
+              <li>Work like in other languages</li>
+              <li>Require an "else"</li>
+              <li>Require no brackets</li>
+              <li><code>!=</code> is written <code>/=</code> to look like $ \neq $</li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                weirdDivision num denom
+                  = if denom == 0 then 0 else num / denom
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3>Exercise</h3>
+        <span class="subtitle">
+          Write a factorial function
+        </span>
+      </section>
+      <section class="bg-red">
         <div class="wrap">
+          <h3>A better syntax?</h3>
           <div class="grid vertical-align">
             <div class="column">
               \(
                 f(x) =
                   \begin{cases}
-                    1 & \text{if } x = 1\\
-                    0 & \text{otherwise}
+                    1 & \text{if } x = 0\\
+                    x * f(x - 1) & \text{otherwise}
                   \end{cases}
               \)
             </div>
             <div class="column">
               <pre>
                 <code class="language-haskell">
-                  f x =
-                    | x == 1 = 1
-                    | otherwise = 0
+                  f x = if x == 0 then 1 else x * (f (x - 1))
                 </code>
               </pre>
             </div>
           </div>
         </div>
+        Not very similar...
       </section>
+      <section class="bg-green">
+          <div class="wrap">
+            <h3>A better syntax!</h3>
+            <div class="grid vertical-align">
+              <div class="column">
+                \(
+                  f(x) =
+                    \begin{cases}
+                      1 & \text{if } x = 0\\
+                      x * f(x - 1) & \text{otherwise}
+                    \end{cases}
+                \)
+              </div>
+              <div class="column">
+                <pre>
+                  <code class="language-haskell">
+                    f x
+                      | x == 0 = 1
+                      | otherwise = x * (f (x - 1))
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
+          Very similar!
+    </section>
+    <section class="bg-primary slide-top">
+      <h2>Guard Syntax</h2>
+      <div class="wrap">
+        <div class="grid vertical-align">
+          <div class="column">
+            <ul>
+              <li>A list of coditions, each prefixed with a <code>|</code></li>
+              <li><code>otherwise</code> used as a catch-call</li>
+              <li>Much cleaner than a lot of ifs</li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                f x
+                  | x == 0 = 1
+                  | (x % 2) == 0 = 2
+                  | otherwise = 3
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                f x
+                  = if x == 0 then 1
+                    else if (x % 2) == 0 then 2
+                    else 3 
+              </code>
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-primary">
+      <div class="wrap">
+        <div class="content-center">
+          <h2>Data Types</h2>
+          <p>
+            Let's say that we want to return some kind of error type on mathematical operations.
+            After all, $ \frac{x}{0} $ is undefined $ \forall x $. 
+            How can we do that?
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="bg-secondary">
+      <h2>Two Cases</h2>
+      <div class="grid vertical-align">
+        <div class="column">
+          <h3>We have a value</h3>
+        </div>
+        <div class="column">
+          <h3>We have undefined</h3>
+        </div>
+      </div>
+    </section>
+    <section class="bg-secondary slide-top">
+      <div class="grid vertical-align">
+        <div class="column">
+          <ul>
+            <li>Define a new datatype named <code>SafeNumber</code></li>
+            <li>
+              <code>SafeNumber</code> can be one of two things:
+              <ol>
+                <li><code>Simply</code> an <code>Int</code></li>
+                <li><code>Undefined</code></li>
+              </ol>
+            </li>
+            <li>Sort of like a type-safe C union</li>
+            <li>Ignore the <code>deriving</code> for now, that's just so you can test equality and print the values</li>
+          </ul>
+        </div>
+        <div class="column">
+          <pre>
+            <code class="language-haskell">
+                data SafeNumber = Simply Int | Undefined
+                  deriving (Show, Eq)
+            </code>
+          </pre>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h1>Making a <code>SafeNumber</code></h1>
+      <pre>
+        <code class="language-haskell">
+          safeDivision num denom
+            | denom == 0 = Undefined
+            | otherwise = Simply (num / denom)
+        </code>
+      </pre>
+    </section>
+    <section class="bg-primary">
+      <h1>Using <code>SafeNumber</code></h1>
+      <div class="grid vertical-align">
+        <div class="column">
+          <ul>
+            <li>Pattern matching at last!</li>
+            <li>We can match over each <emph>case</emph> of our type</li>
+            <li>Since <code>Simply</code> contains an <code>Int</code>, we can get it out of the data type, and name it <code>n</code></li>
+            <li>Since <code>Undefined</code> contains nothing, we have nothing to match over</li>
+          </ul>
+        </div>
+        <div class="column">
+          <pre>
+            <code class="language-haskell">
+                orZero (Simply n) = n
+                orZero Undefined = 0
+            </code>
+          </pre>
+        </div>
+      </div>
+    </section>
+    <section class="bg-primary">
+        <h1>Pattern Matching over Values</h1>
+        <div class="grid vertical-align">
+          <div class="column">
+            <ul>
+              <li>Instead of storing contained values as variables, we can match them directly</li>
+              <li>This allows us to avoid putting in "if" statements</li>
+              <li>Underscores allow us to ignore values entirely</li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                  saferDivide :: SafeNumber -> SafeNumber -> SafeNumber
+                  saferDivide Undefined _ = Undefined
+                  saferDivide _ Undefined = Undefined
+                  saferDivide _ (Simply 0) = Undefined
+                  saferDivide (Simply num) (Simply denom) = Simply (num / denom)
+              </code>
+            </pre>
+          </div>
+        </div>
+    </section>
+    <section>
+        <h3>Exercises</h3>
+        <div class="wrap">
+          <div class="grid vertial-align">
+            <div class="column">
+              <h5>Write a <code>SafeMultiply</code> function</h5>
+            </div>
+            <div class="column">
+              <h5>Write a <code>SafeSubtract</code> function</h5>
+            </div>
+            <div class="column">
+             <h5>Write a <code>SafeAdd</code> function</h5>
+            </div>
+          </div>
+        </div>
+    </section>
+    <section class="bg-primary slide-top">
+      <div class="wrap">
+          <div class="content-left">
+            <h2>Thinking Abstractly</h2>
+            <p>
+              Writing out all those functions really sucked!
+              They were basically all the same: If either side is <code>Undefined</code>,
+              the result is <code>Undefined</code>.
+              Otherwise, the result is <code>Simply</code> the operation over the values.
+              Surely there must be a better way?
+            </p>
+          </div>
+        </div>
+    </section>
+    <section class="bg-primary">
+        <h1>Getting Abstract</h1>
+        <div class="grid vertical-align">
+          <div class="column">
+            <ul>
+              <li>This function takes any function that applies to two integers, and makes it useable over <code>SafeNumber</code>s</code></li>
+              <li>It works simply: 
+                <ol>
+                  <li>If the first number is <code>Undefined</code>, the result is <code>Undefined</code></li>
+                  <li>If the second number is <code>Undefined</code>, the result is <code>Undeifned</code></li>
+                  <li>Otherwise, the result is <code>Simply</code> the function applies to the two numbers</li>
+                </ol>
+              </li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                makeSafe :: (Int -> Int -> Int) -> SafeNumber -> SafeNumber -> SafeNumber
+                makeSafe _ Undefined _ = Undefined
+                makeSafe _ _ Undefined = Undefined
+                makeSafe f (Simply a) (Simply b) = Simply (f a b)
+              </code>
+            </pre>
+          </div>
+        </div>
+    </section>
+    <section class="bg-primary slide-top">
+      <h1>Some Curry</h1>
+      <div class="grid vertical-align">
+        <div class="column">
+          <ul>
+            <li>Functions in Haskell are <i>curried</i></li>
+            <li>This means that you can partially apply arguments</li>
+            <li>In these cases, we only provide the first argument (of type <code>Int -> Int -> Int</code></li>
+            <li>Others can then apply the other two (both of type <code>SafeNumer</code>) later</li>
+          </ul>
+        </div>
+        <div class="column">
+          <pre>
+            <code class="language-haskell">
+              safeAdd = makeSafe (+)
+              safeMultiply = makeSafe (*)
+              safeSubtract = makeSafe (-)
+            </code>
+          </pre>
+        </div>
+      </div>
+    </section>
+    <section class="bg-primary slide-top">
+      <div class="wrap">
+        <div class="content-right">
+          <h2>Mental Abstraction</h2>
+          <p>
+            In Haskell, you can always put parenthesis to the right of the function.
+            So, given <code>Int -> Int -> Int</code>, you can think of it as "a function taking two ints and returning an int."
+            You can also think of this as <code>Int -> (Int -> Int)</code>, or "A function that takes an Integer, and returns <i>another function</i>, which itself takes one Integer, and returns an Integer."
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="bg-primary slide-top">
+        <div class="wrap">
+          <div class="content-center">
+            <h2>Applies to makeSafe</h2>
+            <p>
+              <code>makeSafe :: (Int -> Int -> Int) -> SafeNumber -> SafeNumber -> SafeNumber</code>
+              can also be read as 
+              <code>makeSafe :: (Int -> Int -> Int) -> (SafeNumber -> SafeNumber -> SafeNumber)</code>
+            </p>
+          </div>
+        </div>
+      </section>
+    <section class="bg-secondary">
+      <div class="wrap">
+        <div class="content-center">
+          <h2>A Division Problem</h2>
+          <p>
+            We want to be able to divide safely, but <code>safeDivision</code> is of type <code>Int -> Int -> SafeNumber</code>, not
+            <code>Int -> Int -> Int</code>.
+            How can we fix this?
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="bg-primary slide-top">
+        <h1>Application</h1>
+        <div class="grid vertical-align">
+          <div class="column">
+            <ul>
+              <li>This function works similarly to <code>makeSafe</code></li>
+              <li>However, it does not wrap the result of <code>f a b</code> in a <code>Simply</code>, as <code>f</code> returns a <code>SafeNumber</code> already</li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                applySafely :: (Int -> Int -> SafeNumber) -> SafeNumber -> SafeNumber -> SafeNumber
+                applySafely _ Undefined _ = Undefined
+                applySafely _ _ Undefined = Undefined
+                applySafely f (Simply a) (Simply b) = f a b
+
+                verySafeDivide = applySafely safeDivision
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section class="bg-red">
+        <h1>OH CRAP</h1>
+        <h2>WE JUST ACCIDENTALLY MADE A MONAD</h2>
+        <sup>Kind of, at least!</sup>
+      </section>
+      <section class="bg-red">
+          <h1>Next time!</h1>
+          <h5>Fun with Lists</h5>
+          <h5>Getting Lazy</h5>
+          <h5>Getting Infinitely Lazy</h5>
+          <h5>Getting Lazy Italian Style</h5>
+        </section>
     </article>
+    
 		<script>
 			window.ws = new WebSlides()
 		</script>

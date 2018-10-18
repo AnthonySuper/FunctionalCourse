@@ -192,6 +192,7 @@ This is a very useful way of thinking about things, as it turns out.
 2. Write a function that triples any input number.
 
 ## Guard Syntax
+
 Let's say we want to use a conditional expression in Haskell.
 More specifically, let's define a function `isOne :: Int -> Bool`, which will tell us if a given number is one.
 How might we define that?
