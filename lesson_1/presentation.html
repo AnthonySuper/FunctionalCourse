@@ -340,7 +340,7 @@
         <div class="column">
           <pre>
             <code class="language-haskell">
-                data SafeNumber = Simply Int | Undefined
+                data SafeNumber = Simply Float | Undefined
                   deriving (Show, Eq)
             </code>
           </pre>
@@ -449,7 +449,7 @@
           <div class="column">
             <pre>
               <code class="language-haskell">
-                makeSafe :: (Int -> Int -> Int) -> SafeNumber -> SafeNumber -> SafeNumber
+                makeSafe :: (Float -> Float -> Float) -> SafeNumber -> SafeNumber -> SafeNumber
                 makeSafe _ Undefined _ = Undefined
                 makeSafe _ _ Undefined = Undefined
                 makeSafe f (Simply a) (Simply b) = Simply (f a b)
@@ -497,9 +497,9 @@
           <div class="content-center">
             <h2>Applies to makeSafe</h2>
             <p>
-              <code>makeSafe :: (Int -> Int -> Int) -> SafeNumber -> SafeNumber -> SafeNumber</code>
+              <code>makeSafe :: (Float -> Float -> Float) -> SafeNumber -> SafeNumber -> SafeNumber</code>
               can also be read as 
-              <code>makeSafe :: (Int -> Int -> Int) -> (SafeNumber -> SafeNumber -> SafeNumber)</code>
+              <code>makeSafe :: (Float -> Float -> Float) -> (SafeNumber -> SafeNumber -> SafeNumber)</code>
             </p>
           </div>
         </div>
@@ -509,8 +509,8 @@
         <div class="content-center">
           <h2>A Division Problem</h2>
           <p>
-            We want to be able to divide safely, but <code>safeDivision</code> is of type <code>Int -> Int -> SafeNumber</code>, not
-            <code>Int -> Int -> Int</code>.
+            We want to be able to divide safely, but <code>safeDivision</code> is of type <code>Float -> Float -> SafeNumber</code>, not
+            <code>Float -> Float -> Int</code>.
             How can we fix this?
           </p>
         </div>
@@ -528,7 +528,7 @@
           <div class="column">
             <pre>
               <code class="language-haskell">
-                applySafely :: (Int -> Int -> SafeNumber) -> SafeNumber -> SafeNumber -> SafeNumber
+                applySafely :: (Float -> Float -> SafeNumber) -> SafeNumber -> SafeNumber -> SafeNumber
                 applySafely _ Undefined _ = Undefined
                 applySafely _ _ Undefined = Undefined
                 applySafely f (Simply a) (Simply b) = f a b
