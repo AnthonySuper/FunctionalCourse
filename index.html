@@ -3,8 +3,46 @@
 <head>
   <meta charset="utf-8">
   <title>Functional Course</title>
+  <style>
+
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      border-radius: 10px;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    .container h1 {
+      margin-left: 20px;
+    }
+  </style>
 </head>
 <body>
-
-</body>
+  <article class="container">
+    <h1>Functional Course</h1>
+    <div class="card">
+      <h2>Class 1</h2>
+      <h3>A Small Dive into Functional Programming</h3>
+      <p>
+        In <a href="/lesson_1/presentation.html">this class,</a> we look at the basics of functional programming.
+      </p>
+    </div>
+    <div class="card">
+        <h2>Class 2</h2>
+        <h3>Getting Lazy with Lists</h3>
+        <p>
+          In <a href="/lesson_2/presentation.html">this class,</a> we take a look at laziness and lists.
+        </p>
+      </div>
+    </article>  
+  </body>
 </html>

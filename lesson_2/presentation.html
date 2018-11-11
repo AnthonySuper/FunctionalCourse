@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" href="/css/svg-icons.css">
+    <link rel="stylesheet" href="/css/webslides.css">
+    <link rel="stylesheet" href="/css/prism.css">
+	</head>
+	<body>
+    <script src="/js/webslides.min.js"></script>
+    <script src="/js/svg-icons.js"></script>
+    <script src="/js/prism.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        processEscapes: true
+      });
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    <article id="webslides">
+      <section>
+        <h1>Functional Course, Lession 2</h1>
+        <h5>Or, how we can get lazy with lists</h5>
+      </section>
+
+      <section class="bg-primary slide-top bg-gradient-v">
+        <h1>Motivation</h1>
+        <ul>
+          <li>
+            A shockingly large amount of software boils down to maniuplating lists
+          </li>
+          <li>
+            Lists are used in a huge variety of contexts
+          </li>
+          <li>
+            Lists are a great way to learn about how Haskell is lazy
+          </li>
+          <li>
+            The List monad is one of the easier Monads to learn
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h1>Why doesn't this loop forever?</h1>
+        <pre>
+          <code class="language-haskell">
+            allOnes :: [Int]
+            allOnces = 1 : allOnes
+
+            main = do
+              print $ take 5 allOnes      
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary">
+        <h2>Haskell is Call-By-Need!</h2>
+        <ul>
+          <li>
+            <h5>Values aren't immediately evaluated</h5>
+          </li>
+          <li>
+            <h5>A pointer to a "thunk" that can compute the value is stored instead</h5>
+          </li>
+          <li>
+            <h5>When the value becomes needed, this "thunk" is ran</h5>
+          </li>
+          <li>
+            <h5>The evaluated value replaces the thunk so you don't evaluate twice</h5>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bg-secondary">
+        <h3>What's a list?</h3>
+        <div class="grid vertical-align">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                data MyList a = Empty | Cons a (MyList a)
+
+                emptyList = Empty
+                oneList = Cons 10 Empty
+                twoList = Cons 10 (Cons 11 Empty)
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>
+                <h4>Lists are either empty or an item and the rest of the list</h4>
+              </li>
+              <li>
+                <h4>This data structure probably seems familiar...</h4>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <section>
+        <div class="grid vertical-align">
+          <div class="column">
+            <pre>
+              <code class="language-cpp">
+                template&lt;typename T&gt;
+                struct LinkedList {
+                  T item;
+                  LinkedList&lt;T&gt; *next;
+                };
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <h3>It's a linked list!</h3>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-red">
+        <h1>So where is Haskell lazy?</h1>
+        <ul>
+          <li>
+            <h5>Haskell evaluates things as shallowly as possible</h5>
+          </li>
+          <li>
+            <h5>Starts off completely unevaluated</h5>
+          </li>
+          <li>
+            <h5>If you pattern match on a part of it, that part is evaluated, by the rest is not!</h5>
+          </li>
+          <li>
+            <h5>Doing side effects under this is tricky&mdash;who knows when they'll actually happen?</h5>
+          </li>
+          <li>
+            <h5>Monadic IO is essentially required for sanity as it enforces a sequence</h5>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bg-primary">
+        <h3>Things to do with lists</h3>
+        <ul>
+          <li>
+            <h5><em>Transform</em> their elements</h5>
+          </li>
+          <li>
+            <h5><em>Filter</em> their elements</h5>
+          </li>
+          <li>
+            <h5><em>Reduce</em> their elements into one structure</h5>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bg-secondary">
+        <div class="grid vertical-align">
+          <div class="column">
+            <h3>Transform (map)</h3>
+            <pre>
+              <code class="language-hs">
+                map :: (a -> b) -> [a] -> [b]
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+              <h3>Filter (filter)</h3>
+              <pre>
+                <code class="language-hs">
+                  map :: (a -> Bool) -> [a] -> [a]
+                </code>
+              </pre>
+          </div>
+          <div class="column">
+              <h3>Reduce (Fold)</h3>
+              <pre>
+                <code class="language-hs">
+                  foldr :: (a -> b -> b) -> b -> [a] -> b 
+                  foldl :: (b -> a -> b) -> b -> [a] -> b 
+                </code>
+              </pre>
+          </div>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Map</h1>
+        <span class="subtitle">Not as bad as you'd think</span>
+      </section>
+      <section>
+        <h2>Apply a function to <em>all values</em> in a list</h2>
+        <h2>Return the results as a list</h2>
+      </section>
+      <section>
+          <h2>Exercise</h2>
+          <h3>Write a map function</h3>
+      </section>
+      <section>
+          <h1>How to do that?</h1>
+          <div class="grid vertical-align">
+            <div class="column">
+              <ul>
+                <li>Figure out the "base case" (an empty list)</li>
+                <li>Figure out how to handle a <em>single element</em></li>
+                <li>Figure out how to handle the <em>other elements</em></li>
+                <li>Figure out how to combine the results</li>
+              </ul>
+            </div>
+            <div class="column">
+              <pre>
+                <code class="language-haskell">
+                    myMap :: (a -> b) -> [a] -> [b]
+                    myMap f [] = _
+                    myMap f (x:xs) = _ _ : _ 
+                </code>
+              </pre>
+            </div>
+          </div>
+      </section>
+      <section>
+          <pre>
+            <code class="language-haskell">
+                myMap :: (a -> b) -> [a] -> [b]
+                myMap f [] = []
+                myMap f (x:xs) = f x : myMap f xs  
+            </code>
+          </pre>
+      </section>
+      <section>
+        <h1>Go write filter yourself</h1>
+        <span class="subtitle">It's not that hard</span>
+      </section>
+      <section>
+        <h1>What's a fold?</h1>
+      </section>
+      <section>
+        <img src="https://i.dailymail.co.uk/i/pix/2015/03/20/26D7B8BA00000578-3004164-The_diagram_above_shows_the_approach_outlined_by_the_scientists_-a-3_1426867512260.jpg">
+      </section>
+      <section>
+          <div class="grid vertical-align">
+            <div class="column">
+              <ul>
+                <li>Take an initial value</li>
+                <li>Take a function that takes the initial value and the next value in the list</li>
+                <li>Merge them together</li>
+              </ul>
+            </div>
+            <div class="column">
+              <pre>
+                <code class="language-haskell">
+                    foldr (+) 0 [1, 2, 3]
+                    1 + (foldr (+) 0 [2, 3])
+                    1 + (2 + (foldr (+) 0 [3]))
+                    1 + (2 + (3 + (foldr (+) 0 [])))
+                    1 + (2 + (3 + 0))
+                </code>
+              </pre>
+            </div>
+          </div>
+      </section>
+      <section>
+          <div class="grid vertical-align">
+            <div class="column">
+              <ul>
+                <li>The associativity matters</li>
+                <li>Left folds are left-associative, so they aren't as lazy!</li>
+                <li>Generally you want to use <code>foldl'</code>, which isn't lazy at all</li>
+              </ul>
+            </div>
+            <div class="column">
+              <pre>
+                <code class="language-haskell">
+                    foldl (+) 0 [1, 2, 3]
+                    foldl (+) (0 + 1) [2, 3]
+                    foldl (+) ((0 + 1) + 2) [3]
+                    foldl (+) (((0 + 1) + 2) + 3) []
+                    (((0 + 1) + 2) + 3)
+                </code>
+              </pre>
+            </div>
+          </div>
+      </section>
+      <section>
+          <h3>Exercises</h3>
+          <div class="wrap">
+            <div class="grid vertial-align">
+              <div class="column">
+               Write <code>foldr</code>
+              </div>
+              <div class="column">
+                Write <code>foldl</code>
+              </div>
+            </div>
+          </div>
+      </section>
+      <section class="bg-red">
+        <h1>MONAD ALERT</h1>
+      </section>
+      <section class="bg-red">
+        <h1>OKAY I LIED</h1>
+        <h3>FUNCTOR ALERT</h3>
+      </section>
+      <section>
+        <h2>What's a functor?</h2>
+        <div class="grid vertical-align">
+          <div class="column">
+            <ul>
+              <li>A typeclass (or a set of functions you can implement for any type, with laws)</li>
+              <li>Consists of one required function, <code>fmap</code></li>
+              <li>Allows you to change <em>values with a context</em></li>
+            </ul>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                  class Functor f where
+                    fmap :: (a -> b) -> f a -> f b
+
+                  instance Functor Maybe where
+                    fmap f (Nothing) = Nothing
+                    fmap f (Just a) = Just (f a)
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>Why does this matter?</h2>
+        <ul>
+          <li>
+            <h5>Functors are very general, and apply to many data structures</h5>
+          </li>
+          <li>
+            <h5>They let you write highly generic code</h5>
+          </li>
+          <li>
+            <h5>Saves quite a bit of time</h5>
+          </li>
+          <li>
+            <h5>A good introduction to polymorphism</h5>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+          <h3>Exercises</h3>
+          <div class="wrap">
+            <div class="grid vertial-align">
+              <div class="column">
+               Write the function <code>tryMultiply :: Maybe Int -> Int -> Maybe Int</code>
+              </div>
+              <div class="column">
+                Write <code>fmap</code> for <code>[]</code>
+                (name it fmap')
+              </div>
+            </div>
+          </div>
+      </section>
+    </article>
+    
+		<script>
+			window.ws = new WebSlides()
+		</script>
+	</body>
+</html>
