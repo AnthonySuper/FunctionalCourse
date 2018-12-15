@@ -1,0 +1,711 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" href="/css/svg-icons.css">
+    <link rel="stylesheet" href="/css/webslides.css">
+    <link rel="stylesheet" href="/css/prism.css">
+	</head>
+	<body>
+    <script src="/js/webslides.min.js"></script>
+    <script src="/js/svg-icons.js"></script>
+    <script src="/js/prism.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        processEscapes: true
+      });
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    <article id="webslides">
+      <section>
+        <h2>A Step back</h2>
+      </section>
+      <section>
+        <h2>Why?</h2>
+        <ul>
+          <li>
+            <h5>This class has been moving too fast</h5>
+          </li>
+          <li>
+            <h5>We need to take a step back before doing the cool stuff</h5>
+          </li>
+        </ul>
+      </section>
+      <section class="bg-red">
+        <h1>A Unifying Framework</h1>
+        <h2>A "Virtual File System"</h2>
+      </section>
+      <section class="bg-blue">
+        <h1>Why?</h1>
+        <ul>
+          <li>
+            <h5>It's "close enough" to a real-world use case</h5>
+          </li>
+          <li>
+            <h5>It will let us define some simple functions</h5>
+          </li>
+          <li>
+            <h5>It leads itself well to much more complex things</h5>
+          </li>
+          <li>
+            <h5>It's fun to play with!</h5>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h1>Let's make a program!</h1>
+        <h2>Working with virtual "file systems"</h2>
+      </section>
+      <section class="nobreak">
+        <h2>An entry on a file system is either...</h2>
+        <div class="grid vertical-align">
+          <div class="column">
+            <h3>A file</h3>
+          </div>
+          <div class="column">
+            <h3>A directory</h3>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>What's in a directory?</h2>
+      </section>
+      <section>
+        <h2>What's in a file?</h2>
+      </section>
+      <section>
+        <h2>Boils down to...</h2>
+        <div class="grid vertical-align">
+          <div class="column">
+            <h3>Directories have...</h3>
+            <ul>
+              <li>A name</li>
+              <li>Contained directories</li>
+              <li>Contained files</li>
+            </ul>
+          </div>
+          <div class="column">
+            <h3>Files have...</h3>
+            <ul>
+              <li>A name</li>
+              <li>Some text content</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>In Java</h2>
+        <pre>
+          <code class="language-java">
+            public class DirectoryEntry {
+
+            }
+
+            public class File extends DirectoryEntry {
+              public String name;
+              public String contents;
+            }
+
+            public class Directory extends DirectoryEntry {
+              public String name;
+              public ArrayList&lt;DirectoryEntry&gt; containedEntries;
+            }
+          </code>
+        </pre>
+      </section>
+      <section class="bg-red">
+        <h2>Haskell Doesn't have Subtyping!!</h2>
+        <h3>What are we to do...</h3>
+      </section>
+      <section>
+        <h2>Two Separate types?</h2>
+        <div class="grid vertical-align">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                data File = File String String
+                  deriving (Show, Eq, Ord)
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                data Directory = Directory String [???]
+                  deriving (Show, Eq, Ord)
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>One Sum Type!</h2>
+        <pre>
+          <code class="language-haskell">
+            data DirectoryEntry
+              = File String String
+              | Directory String [DirectoryEntry]
+              deriving (Show, Eq)
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>So...</h2>
+        <pre>
+          <code class="language-haskell">
+            a = File "hello.rb" "puts 'Hello, World!'"
+            -- ^ a has type DirectoryEntry
+            b = Directory "emptyDirectory" []
+            -- ^ b has type DirectoryEntry
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>This is a logical OR</h2>
+        <h3>A Directory Entry is either...</h3>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <h3>A File</h3>
+            <pre>
+              <code class="language-haskell">
+                File "foo.rb" "puts 'Hello, world!'"
+              </code>
+            </pre>
+          </div>
+          <div class="column"><h1>Or</h1></div>
+          <div class="column">
+            <h3>A Directory</h3>
+            <pre>
+              <code class="language-haskell">
+                Directory "emptyDirectory" []
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h2>Exercises</h2>
+        <ul>
+          <li>Create a <code>File</code> named "Foo.txt" with some text content</li>
+          <li>Create a <code>Directory</code> named "dir" that contains <strong>two files</strong></li>
+          <li>
+            Create a <code>Directory</code> that contains <strong>the previous two entries</strong>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>Functions</h2>
+        <h3>Just the basics</h3>
+      </section>
+      <section>
+        <h2>The most basic</h2>
+        <pre>
+          <code class="language-haskell">
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            -- ^ The name of what we're defining
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            --   ^^ Indicates that we're going to give this a type
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            --      ^ The type of the first argument
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            --                     ^ An arrow, used to indicate more arguments
+            -- Note: the last arrow indicates the return type
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            --                        ^ the return type
+            name (File name _) = name
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            -- ^ One possible "equation" for this function
+            -- If this "equation" doesn't match, it will move to the next one
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --   ^ A pattern to match on 
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --    ^ This pattern matches files
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --         ^ Match the first "element" of the File
+            --           Give it the name of "name" so that we
+            --           can use it in the body of the equation
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --              ^ Match the second "element" of the File
+            --                We're not going to use it in the body
+            --                of the equation, so discard it
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --                 ^ Start the definition of the equation
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Breakdown...</h2>
+        <pre>
+          <code class="language-haskell">
+            
+            name :: DirectoryEntry -> String
+            name (File name _) = name
+            --                   ^ the value of this equation is just the name!
+            name (Directory name _) = name
+          </code>
+        </pre>
+      </section>
+      <section class="bg-green">
+        <h2>The second part is exactly the same</h2>
+      </section>
+      <section class="bg-secondary">
+        <h2>Exercise</h2>
+        <h3>Complete this function which changes the name</h3>
+        <pre>
+          <code class="language-haskell">
+            changeName :: String -> DirectoryEntry -> DirectoryEntry
+            changeName name (File ? ?) = ?
+            -- Note: the "?" are placeholders for you to fill in
+            changeName name (Directory ? ?) = ?
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h3>Solution</h3>
+        <pre>
+          <code class="language-haskell">
+              changeName :: String -> DirectoryEntry -> DirectoryEntry
+              changeName name (File _ t) = File name t
+              changeName name (Directory _ contents) = Directory name contents
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h3>Getting Tricky</h3>
+        <h4>Changing File Contents</h4>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            changeFile :: String -> DirectoryEntry -> DirectoryEntry
+            -- Our function takes the new file contents, and the DirectoryEntry
+            -- It returns the modified DirectoryEntry
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            changeFile :: String -> DirectoryEntry -> DirectoryEntry
+            changeFile contents (File name _) = File name contents
+            -- We return a new file with the name and the contents
+            -- EZ
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            changeFile :: String -> DirectoryEntry -> DirectoryEntry
+            changeFile contents (File name _) = File name contents
+            changeFile contents (Directory _ _) = ? 
+            -- Crap, what to do...
+            -- Well, we can't really change the file contents of a directory can we?
+            -- I guess there's only one thing that makes sense...
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            changeFile :: String -> DirectoryEntry -> DirectoryEntry
+            changeFile contents (File name _) = File name contents
+            changeFile contents (Directory name children) = Directory name children
+            -- Wait a second
+            -- I could just do... 
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            changeFile :: String -> DirectoryEntry -> DirectoryEntry
+            changeFile contents (File name _) = File name contents
+            changeFile _ directory = directory
+            -- I don't always have to pattern-match!
+            -- I know that this is a Directory because I took care of the
+            -- case where it was a file already. 
+            -- Since I can't change the contents of directories, I'll just return it.
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Exercise</h2>
+        <h3>Write a function that removes all children from a directory</h3>
+        <pre>
+          <code class="language-haskell">
+            makeChildless :: DirectoryEntry -> DirectoryEntry
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Trickier</h2>
+        <h3>How can we add an entry?</h3>
+      </section>
+      <section>
+        <pre>
+          <code class="language-haskell">
+              addEntryUnsafely :: DirectoryEntry -> DirectoryEntry -> DirectoryEntry
+              addEntryUnsafely entry (Directory name children) 
+                  = Directory name (entry:children)
+                                      -- ^ the : operator adds an element
+                                      -- to the start of a list
+              addEntryUnsafely _ file = file
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h3>Problems!</h3>
+        <ul>
+          <li>This function can "fail" silently</li>
+          <li>We might lose important directory entries</li>
+          <li>What shall we do?</li>
+        </ul>
+      </section>
+      <section>
+        <h3>First, a type for problems...</h3>
+        <pre>
+          <code class="language-haskell">
+            data DirectoryError
+              = ExpectedDirectory
+              | ExpectedFile 
+              deriving (Show, Read, Eq, Ord)  
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Then, a generic type for errors!</h2>
+        <pre>
+          <code class="language-haskell">
+            data Either a b = Left a | Right b
+              deriving (Show, Read, Eq, Ord)
+              -- This type is built in! 
+              -- Don't try to redefine it
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>
+          What is Either?
+        </h2>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <h3>An Error</h3>
+            <pre>
+              <code class="language-haskell">
+                Left ExpectedDirectory
+              </code>
+            </pre>
+          </div>
+          <div class="column"><h3>Or</h3></div>
+          <div class="column">
+            <h3>A successful result</h3>
+            <pre>
+              <code class="language-haskell">
+                Right (Directory "dir" [File "f" "f"])
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section class="color-red slide-bottom">
+        <h5>Either is also a monad</h5>
+        <h5>We won't use it as one yet don't worry</h5>
+      </section>
+      <section class="color-primary">
+        <h2>Safe addEntry</h2>
+        <pre>
+          <code class="language-haskell">
+              addEntry :: DirectoryEntry -> DirectoryEntry -> Either DirectoryError DirectoryEntry
+              addEntry entry (Directory name children) = Right (Directory name (entry:children))
+              addEntry _ _ = Left ExpectedDirectory          
+          </code>
+        </pre>
+      </section>
+      <section class="color-secondary">
+        <h2>Exercise</h2>
+        <h3>Write a safe version of changeFile</h3>
+        <pre>
+          <code class="language-haskell">
+            safeChangeFile :: String -> DirectoryEntry -> Either DirectoryError DirectoryEntry
+          </code>
+        </pre>
+      </section>
+      <section class="color-primary">
+        <h2>Getting Compositional</h2>
+        <h3>The hasFileNamed function</h3>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            hasFileNamed :: String -> DirectoryEntry -> Bool
+            -- okay, what's our first case...
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            hasFileNamed :: String -> DirectoryEntry -> Bool
+            hasFileName desired (File name _) = desired == name 
+            -- This seems to work out pretty well!
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            hasFileNamed :: String -> DirectoryEntry -> Bool
+            hasFileNamed desired (File name _) = desired == name 
+            hasFileNamed disired (Directory _ children) = 
+            -- It's called has FILE named so we don't care about directories with that name
+            -- Now, let's see... 
+            -- We want to recurse on *all children* of the directory, and see if 
+            -- *any* of them have a file with the name
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Now, for google...</h2>
+        <h3>I search "Haskell list any" and learn that this exists:</h3>
+        <pre>
+          <code class="language-haskell">
+            (a -> Bool) -> [a] -> Bool
+            -- ^ returns True if at least one item in the list fulfills the condition 
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2>Building up...</h2>
+        <pre>
+          <code class="language-haskell">
+            hasFileNamed :: String -> DirectoryEntry -> Bool
+            hasFileNamed desired (File name _) = desired == name 
+            hasFileNamed disired (Directory _ children) = 
+              any (hasFileNamed desired) children
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Wait, what?</h1>
+        <p>
+          We defined <code>hasFileNamed</code> to take <strong>two arguments</strong>.
+          Here, I pass it <strong>just one.</strong>
+          How does that work?
+        </p>
+      </section>
+      <section>
+        <h1>Remember the currying!</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre><code class="language-haskell">
+              hasFileNamed :: String -> DirectoryEntry -> Bool 
+              hasFileNamed desired (File name _) = desired == name
+              hasFileNamed desired (Directory _ children) =
+                any (hasFileNamed desired) children
+            </code></pre>
+          </div>
+          <div class="column">
+            <pre><code class="language-haskell">
+              hasFileNamed :: String -> (DirectoryEntry -> Bool)
+              hasFileNamed desired = inner
+                where
+                  inner (File name _) = desired == name
+                  inner (Directory _ children) =
+                    any (hasFileNamed desired) children
+            </code></pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Haskell functions always take one argument!</h1>
+        <p>Sometimes they just return <strong>another function</strong></p>
+        <p>Sometimes that function returns <strong>another function...</strong></p>
+        <p>Either way, you can always <strong>partially apply</strong> arguments as a result</p>
+        <p>No need to write lambdas in many cases!</p>
+      </section>
+      <section>
+        <h2>That type gives me an idea...</h2>
+        <h3>Generalizing our has function</h3>
+      </section>
+      <section>
+        <h1>The type</h1>
+        <pre>
+          <code class="language-haskell">
+            fileMatches :: (String -> String -> Bool) -> DirectoryEntry -> Bool 
+            --              ^ predicate taking file name and contents
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Try writing it!</h1>
+      </section>
+      <section>
+        <pre>
+          <code class="language-haskell">
+            fileMatches :: (String -> String -> Bool) -> DirectoryEntry -> Bool
+            fileMatches pred (File name value) = pred name value
+            fileMatches pred (Directory name children) 
+                = any (fileMatches pred) children
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Much more compositional!</h1>
+        <pre>
+          <code class="language-haskell">
+            hasFileNamed' :: String -> DirectoryEntry -> Bool
+            hasFileNamed' n e = fileMatches matcher e 
+                where
+                    matcher name _ = name == n 
+        
+            fileNameMatches :: (String -> Bool) -> DirectoryEntry -> Bool
+            fileNameMatches p e = fileMatches matcher e
+                where
+                    matcher name _ = p name
+            
+            fileBodyMatches :: (String -> Bool) -> DirectoryEntry -> Bool
+            fileBodyMatches p e = fileMatches matcher e
+                where
+                    matcher _ body = p body
+          </code>
+        </pre>
+      </section>
+      <section class="bg-red">
+        <h1>We can go deeper...</h1>
+        <pre>
+          <code class="language-haskell">
+              hasFileNamed'' :: String -> DirectoryEntry -> Bool 
+              hasFileNamed'' name b = fileNameMatches (== name) b
+          </code>
+        </pre>
+      </section>
+    </article>
+		<script>
+			window.ws = new WebSlides()
+		</script>
+	</body>
+</html>
