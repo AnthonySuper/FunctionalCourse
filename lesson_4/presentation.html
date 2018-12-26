@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" href="/css/svg-icons.css">
+    <link rel="stylesheet" href="/css/webslides.css">
+    <link rel="stylesheet" href="/css/prism.css">
+	</head>
+	<body>
+    <script src="/js/webslides.min.js"></script>
+    <script src="/js/svg-icons.js"></script>
+    <script src="/js/prism.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        processEscapes: true
+      });
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    <article id="webslides">
+      <section class="bg-apple slide-bottom">
+        <h1>More Generic Filesystems</h1>
+        <h3>Storing Anything</h3>
+      </section>
+      <section class="bg-primary">
+        <h1>Remember, a DirectoryEntry is</h1>
+        <div class="wrap">
+          <div class="content-left">
+            <h3>A file</h3>
+            <pre>
+              <code class="language-haskell">
+                File "name" "body"
+                File "name" 10
+                File "name" [1, 2, 3]
+              </code>
+            </pre>
+          </div>
+          <idv class="content-right">
+            <h3>A directory</h3>
+            <pre>
+              <code class="language-haskell">
+                Directory "empty" []
+                Directory "full" [File "file" "whatever"]
+                Directory "me" [File "file" 100]
+              </code>
+            </pre>
+          </idv>
+        </div>
+      </section>
+      <section class="slide-top">
+        <div class="wrap">
+          <div class="content-left">
+            <h3>Types can take parameters</h3>
+            <ul>
+              <li>Similar to templates in other languages</li>
+              <li>Much nicer syntax</li>
+              <li>A bit more powerful</li>
+            </ul>
+          </div>
+          <div class="content-left">
+            <pre>
+              <code class="language-haskell">
+                data Maybe a = Just a | Nothing
+                data List a = Nil | Cons a (List a)
+                data Tree a = Leaf a | Branch (Tree a) a (Tree a)
+                data Either a b = Left a | Right b
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Evaluating</h1>
+        <div class="wrap">
+          <div class="content-left">
+            <h3>Given</h3>
+            <pre>
+              <code class="language-haskell">
+                data Maybe a = Just a | Nothing
+                data Either a b = Left a | Right b
+              </code>
+            </pre>
+          </div>
+          <div class="content-left">
+            <h3>Evaluate</h3>
+            <pre>
+              <code class="language-haskell">
+                Maybe Int -- Just Int | Nothing
+                Maybe String -- Just String | Nothing
+                Either String Int -- Left String | Right Int
+                Either [Int] [Int] -- Left [Int] | Right [Int]
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section class="bg-purple">
+        <h1>Wait!</h1>
+        <h3>That looks like a function</h3>
+      </section>
+      <section>
+        <h1>They sorta are</h1>
+        <h3>The syntax is similar for a reason</h3>
+      </section>
+      <section>
+        <h1>Parameterize Our Type</h1>
+        <pre>
+          <code class="language-haskell">
+            data DirectoryEntry a
+              = File String a
+              | Directory String [DirectoryEntry a]
+              deriving (Show, Read, Eq, Ord)
+          </code>
+        </pre>
+      </section>
+    </article>
+		<script>
+			window.ws = new WebSlides()
+		</script>
+	</body>
+</html>

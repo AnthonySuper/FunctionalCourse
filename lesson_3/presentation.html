@@ -130,7 +130,7 @@
                   deriving (Show, Eq, Ord)
               </code>
             </pre>
-          </div>
+          </div>en righ
           <div class="column">
             <pre>
               <code class="language-haskell">
@@ -702,6 +702,85 @@
               hasFileNamed'' name b = fileNameMatches (== name) b
           </code>
         </pre>
+      </section>
+      <section class="bg-red">
+        <h1>A harder exercise</h1>
+        <h2>Write a "countAllFiles" function</h2>
+        <pre>
+          <code class="language-haskell">
+            countAllFiles :: DirectoryEntry -> Int
+          </code>
+        </pre>
+      </section>
+      <section class="bg-primary">
+        <h1>More generalized</h1>
+        <p>Counting all files of a given type</p>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFiles :: _ -> DirectoryEntry -> Int
+            countFiles _ _ = _
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFilesWhere :: _ -> DirectoryEntry -> Int
+            countFilesWhere _ _ = _
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFilesWhere :: (String -> String -> Bool) -> DirectoryEntry -> Int
+                                ^ filtering function takes name and body
+            countFilesWhere f _ = _
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFilesWhere :: (String -> String -> Bool) -> DirectoryEntry -> Int
+            countFilesWhere f (File name value) = if f name value then 1 else 0
+            -- A file only contributes if the callback runs
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFilesWhere :: (String -> String -> Bool) -> DirectoryEntry -> Int
+            countFilesWhere f (File name value) = if f name value then 1 else 0
+            -- A file only contributes if the callback runs
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Building Up</h1>
+        <pre>
+          <code class="language-haskell">
+            countFilesWhere :: (String -> String -> Bool) -> DirectoryEntry -> Int
+            countFilesWhere f (File name value) = if f name value then 1 else 0
+            countFilesWhere f (Directory name vals) = sum $ map (countFilesWhere f) vals
+            -- ^ basically the same sort of sum as before
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Interesting Ideas</h1>
+        <h3>What if we want to store non-files?</h3>
+      </section>
+      <section class="bg-primary">
+        <h1>Next time!</h1>
       </section>
     </article>
 		<script>

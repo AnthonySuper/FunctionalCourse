@@ -71,3 +71,16 @@ module Example where
 
     hasFileNamed'' :: String -> DirectoryEntry -> Bool 
     hasFileNamed'' name b = fileNameMatches (== name) b
+
+    countAllFiles :: DirectoryEntry -> Int
+    countAllFiles (File _ _) = 1
+    countAllFiles (Directory _ children) =
+        sum (map countAllFiles children)
+
+    countFiles :: DirectoryEntry -> Int
+    countFiles (File _ _) = 1
+    countFiles (Directory _ entries) = sum $ map countFiles entries
+
+    countFilesWhere :: (String -> String -> Bool) -> DirectoryEntry -> Int
+    countFilesWhere f (File name value) = if f name value then 1 else 0
+    countFilesWhere f (Directory name vals) = sum $ map (countFilesWhere f) vals 
