@@ -115,6 +115,211 @@
           </code>
         </pre>
       </section>
+      <section>
+        <h1>Mapping!</h1>
+        <h2>Polymorphism gives us power</h2>
+      </section>
+      <section>
+        <h1>Example</h1>
+        <p>
+          Let's say that I want to count the words in every file.
+        </p>
+      </section>
+      <section>
+        <h1>Basic idea</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                wordCount :: DirectoryEntry String -> DirectoryEntry Int
+                wordCount (File name body) = file name (length (words body))
+                wordCount (Directory name children) =
+                  Directory name (map wordCount children)
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>What if I want to do other things?</h1>
+        <h5>Find occurences of the word "bob"</h5>
+        <h5>Change from <code>String</code> to the more efficient <code>Text</code> type</h5>
+        <h5>Move from files of ints to files of floats</h5>
+      </section>
+      <section>
+        <h1>Polymorphic map</h1>
+        <h5>Apply an arbitrary function to all file bodies</h5>
+        <h5>Let the function change the contained type</h5>
+      </section>
+      <section>
+        <h1>What does it look like?</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap :: (a -> b) -> DirectoryEntry a -> DirectoryEntry b
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Breakdown</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap :: (a -> b) -> DirectoryEntry a -> DirectoryEntry b
+            --              ^ The function to apply to each file body
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Breakdown</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap :: (a -> b) -> DirectoryEntry a -> DirectoryEntry b
+            --                          ^ DirectoryEntries with type a
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Breakdown</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap :: (a -> b) -> DirectoryEntry a -> DirectoryEntry b
+            --                                              ^ Directory entries with the transformed type
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Implementation</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap f (File name value) = File name (f value)
+            -- Base case is very easy: apply the given function to the value
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Implementation</h1>
+        <pre>
+          <code class="language-haskell">
+            directoryMap f (File name value) = File name (f value)
+            directoryMap f (Directory name values) =
+              Directory name (map (directoryMap f) values)
+              -- ^ Recurse on all values in the directory
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h1>Functor</h1>
+        <h5>A generalization of mapping</h5>
+      </section>
+      <section>
+        <h1>What is Functor?</h1>
+        <h5>A typeclass</h5>
+      </section>
+      <section>
+        <h1>The heck is a typeclass?</h1>
+        <h5>A category of types that you can do certain things over</h5>
+      </section>
+      <section class="slide-top">
+        <div class="wrap">
+          <div class="content-left">
+            <h1>The motivating problem</h1>
+            <p>
+              Haskell doesn't allow function overloading.
+              If you have a function <code>f :: Int -> Int</code>, you can't define <code>f :: Float -> Float</code>.
+              However, this presented a big problem when it came to arithmetic operations.
+              We want to define <code>(+) :: Int -> Int -> Int</code> and <code>(+) :: Float -> Float -> Float</code>.
+              If we can't, we'd need to use some other operator to add floats, and that's gross.
+              How can we fix this?
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="side-right">
+        <div class="wrap">
+          <div class="content-right">
+            <h1>The solution</h1>
+            <p>
+              We can create <em>categories for types</em> that all support some functions.
+              We can then tell the compiler that a given type is in the category by defining those functions!
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="slide-top">
+        <h1>Example</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class Num a where
+                  (+) :: a -> a -> a
+                  (-) :: a -> a -> a
+                  (*) :: a -> a -> a
+
+                instance Num Int where
+                  (+) = -- raw machine code
+                  (-) = -- raw machine code
+                  (*) = -- raw machine code
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content-right">
+              <p>
+                We now have a new category (or class) of types, called <code>Num</code>.
+                If a value belongs to <code>Num</code>, we can add, subtract, and multiply it.
+                We can also make any of our types a <code>Num</code> as long as we implement addition, subtraction, and multiplication!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Using typeclasses</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                addThree :: (Num a) => a -> a -> a -> a
+                addThree x y z = x + y + z
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <p>
+                We can use <code>=></code>, or the constraint arrow, to specify that we need an argument to have a typeclass.
+                It constrains the types that we can use for <code>a</code> to be types which have an instance of <code>Num</code>.
+                It's then easy to read the rest of the signature.
+                It takes three arguments, all of the same type, and returns a value of the same type.
+                The only difference: the type of the arguments needs to be in the category <code>Num</code>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Similarity to interfaces</h1>
+        <div class="content">
+          <p>
+            Java interfaces work similarly.
+            So do C++ pure virtual classes.
+            However, Haskell is special in that the implementing type appears in the type signatures!
+            That is, you can have an <code>add</code> method that returns <em>the type implementing the interface</em>.
+            This is not possible with other languages.
+          </p>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Exercises</h1>
+        <ul>
+          <li>Write a function <code>addMultiply :: (Num a) => a -> a -> a -> a</code> that adds the first two arguments and multiplies that by the third</li>
+          <li>Write a function <code>addAll :: (Num a) => [a] -> a</code> that adds all the values in a list</li>
+          <li>Write a funcction <code>productAll :: (Num a) => [a] -> a</code> that multiplies all the values in a list</li>
+        </ul>
+      </section>
+      <section class="bg-primary">
+        <h1></h1>
+      </section>
     </article>
 		<script>
 			window.ws = new WebSlides()

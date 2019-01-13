@@ -482,74 +482,9 @@
           <li>What shall we do?</li>
         </ul>
       </section>
-      <section>
-        <h3>First, a type for problems...</h3>
-        <pre>
-          <code class="language-haskell">
-            data DirectoryError
-              = ExpectedDirectory
-              | ExpectedFile 
-              deriving (Show, Read, Eq, Ord)  
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2>Then, a generic type for errors!</h2>
-        <pre>
-          <code class="language-haskell">
-            data Either a b = Left a | Right b
-              deriving (Show, Read, Eq, Ord)
-              -- This type is built in! 
-              -- Don't try to redefine it
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2>
-          What is Either?
-        </h2>
-        <div class="grid vertical-align marginless">
-          <div class="column">
-            <h3>An Error</h3>
-            <pre>
-              <code class="language-haskell">
-                Left ExpectedDirectory
-              </code>
-            </pre>
-          </div>
-          <div class="column"><h3>Or</h3></div>
-          <div class="column">
-            <h3>A successful result</h3>
-            <pre>
-              <code class="language-haskell">
-                Right (Directory "dir" [File "f" "f"])
-              </code>
-            </pre>
-          </div>
-        </div>
-      </section>
-      <section class="color-red slide-bottom">
-        <h5>Either is also a monad</h5>
-        <h5>We won't use it as one yet don't worry</h5>
-      </section>
-      <section class="color-primary">
-        <h2>Safe addEntry</h2>
-        <pre>
-          <code class="language-haskell">
-              addEntry :: DirectoryEntry -> DirectoryEntry -> Either DirectoryError DirectoryEntry
-              addEntry entry (Directory name children) = Right (Directory name (entry:children))
-              addEntry _ _ = Left ExpectedDirectory          
-          </code>
-        </pre>
-      </section>
-      <section class="color-secondary">
-        <h2>Exercise</h2>
-        <h3>Write a safe version of changeFile</h3>
-        <pre>
-          <code class="language-haskell">
-            safeChangeFile :: String -> DirectoryEntry -> Either DirectoryError DirectoryEntry
-          </code>
-        </pre>
+      <section class="color-red">
+        <h1>Ignore it!</h1>
+        <h2>We can explain how to deal with this later</h2>
       </section>
       <section class="color-primary">
         <h2>Getting Compositional</h2>
@@ -781,6 +716,9 @@
       </section>
       <section class="bg-primary">
         <h1>Next time!</h1>
+        <h5>Adding polymorphism (directories of anything)</h5>
+        <h5>Adding typeclasses (functor, foldable, traverseable)</h5>
+        
       </section>
     </article>
 		<script>

@@ -6,6 +6,11 @@ module Example where
         | Directory String [DirectoryEntry a]
         deriving (Show, Read, Eq, Ord)
 
+    directoryWordCount :: DirectoryEntry String -> DirectoryEntry Int
+    directoryWordCount (File name w) = File name (length (words w))
+    directoryWordCount (Directory name w) = 
+        Directory name (map directoryWordCount w)
+
     directoryMap :: (a -> b) -> DirectoryEntry a -> DirectoryEntry b
     directoryMap f (File n e) = File n $ f e
     directoryMap f (Directory n net) = Directory n $ map (directoryMap f) net
