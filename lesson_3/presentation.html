@@ -515,7 +515,7 @@
           <code class="language-haskell">
             hasFileNamed :: String -> DirectoryEntry -> Bool
             hasFileNamed desired (File name _) = desired == name 
-            hasFileNamed disired (Directory _ children) = 
+            hasFileNamed desired (Directory _ children) = 
             -- It's called has FILE named so we don't care about directories with that name
             -- Now, let's see... 
             -- We want to recurse on *all children* of the directory, and see if 
