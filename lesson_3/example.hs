@@ -1,16 +1,91 @@
 module Example where
 
+    import Data.List
+
     data DirectoryEntry
         = File String String
         | Directory String [DirectoryEntry]
         deriving (Show, Eq, Ord)
+
+    f = File "hack" "fraud"
+    d = Directory "dir" []
+
+    exFile = File "Foo.txt" "fixed"
+    hackFile = File "Hack.txt" "fraud"
+    dirOne = Directory "dir"
+        [hackFile, File "bar.txt" "fraud"]
+    recurse = Directory "other" [exFile, dirOne]
+
     
     name :: DirectoryEntry -> String
     name (File name _) = name
     name (Directory name _) = name
 
-    f = File "hack" "fraud"
-    d = Directory "dir" []
+
+    hasFileTooLong :: DirectoryEntry -> Bool
+    hasFileTooLong = hasFileWithContents tooLong
+        where
+            tooLong contents = length contents > 50
+
+    hasFileTooShort :: DirectoryEntry -> Bool
+    hasFileTooShort = hasFileWithContents tooShort
+        where
+            tooShort contents = length contents < 50
+
+    hasFileWithContents :: (String -> Bool) -> DirectoryEntry -> Bool
+    hasFileWithContents func = hasFileWithNameAndContents applyFuncToContents
+        where
+            applyFuncToContents name contents = func contents
+        
+
+    hasFileWithName :: (String -> Bool) -> DirectoryEntry -> Bool
+    hasFileWithName func = hasFileWithNameAndContents applyFuncToName
+        where
+            applyFuncToName name contents = func name
+    --  I need you to find all ruby files with the words "class Bar" in them
+
+    hasFileWithNameAndContents :: (String -> String -> Bool) -> DirectoryEntry -> Bool
+    hasFileWithNameAndContents func (File name contents) = func name contents
+    hasFileWithNameAndContents func (Directory _ children) =
+        any (hasFileWithNameANdContents func) children
+
+
+    class Semigroup a where
+        (<>) :: a -> a -> a
+        --
+    
+    class (Semigroup a) => Monoid a where 
+        mempty :: a
+        --
+    
+    class Foldable f where
+        foldMap :: (Monoid m) => (a -> m) -> f a -> m
+        --
+
+
+    data BinaryTree a 
+        = Leaf
+        | Node a (BinaryTree a) (BinaryTree a)
+
+    instance Foldable BinaryTree where
+        foldMap f (Node a lhs rhs) = (f a) <> (foldMap f lhs) <> (foldMap f rhs)
+        foldMap f Leaf = mempty
+    
+
+    data All = All Bool
+
+    instance Semigroup All where
+        (All f) <> (All g) = All (f || g)
+    
+    instance Monoid All where
+        mempty = All False
+    
+    getAll :: All -> Bool
+    getAll (All a) = a
+
+    all :: (Foldable f) -> (a -> Bool) -> f a -> Bool
+    all cb foldable = getAll (foldMap (\x -> All (cb x)) foldable) 
+
 
     changeName :: String -> DirectoryEntry -> DirectoryEntry
     changeName name (File _ t) = File name t 
@@ -32,22 +107,7 @@ module Example where
                             -- to the start of a list
     addEntryUnsafely _ file = file
 
-    data DirectoryError
-        = ExpectedDirectory
-        deriving (Show, Read, Eq, Ord)
-
-    addEntry :: DirectoryEntry -> DirectoryEntry -> Either DirectoryError DirectoryEntry
-    addEntry entry (Directory name children) = Right (Directory name (entry:children))
-    addEntry _ _ = Left ExpectedDirectory
-
-    safeChangeFile :: String -> DirectoryEntry -> Either DirectoryError DirectoryEntry
-    safeChangeFile contents (File name _) = Right (File name contents)
-    safeChangeFile _ _ = Left ExpectedDirectory
-
-    hasFileNamed :: String -> DirectoryEntry -> Bool
-    hasFileNamed desired (File name _) = desired == name
-    hasFileNamed desired (Directory _ children) =
-        any (hasFileNamed desired) children
+    
 
     fileMatches :: (String -> String -> Bool) -> DirectoryEntry -> Bool
     fileMatches pred (File name value) = pred name value
