@@ -364,6 +364,18 @@
           </code>
         </pre>
       </section>
+      <section>
+        <h1>What is this?</h1>
+        <div class="content">
+          <ul>
+            <li>A Functor lets us run any function in some <em>context</em></li>
+            <li>Maybe the context is values in a list</li>
+            <li>Maybe the context is values that might not exist (<code>Maybe</code>)</li>
+            <li>Maybe the context is values in a <code>DirectoryEntry</code></li>
+            <li>Either way, we don't need to care: we can just run our normal function over them</li>
+          </ul>
+        </div>
+      </section>
       <section class="bg-secondary">
         <h1>Exercise</h1>
         <div class="content">
@@ -408,6 +420,39 @@
             toLengths = fmap length
           </code>
         </pre>
+      </section>
+      <section class="bg-primary">
+        <h1>Laws</h1>
+        <div class="content">
+          <ul>
+            <li>Most Typeclasses in Haskell have laws</li>
+            <li>These are things you can "assume" about instances of that Typeclass</li>
+            <li>Makes reasoning about your code very, very easy</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h1>Functor Laws</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <h2>Identity Law</h2>
+            <pre>
+              <code class="language-haskell">
+                fmap id = id 
+              </code>
+            </pre>
+            <p>Running the identity function does nothing</p>
+          </div>
+          <div class="column">
+            <h2>Composition Law</h2>
+            <pre>
+              <code class="language-haskell">
+                fmap (\x -> f (g x)) a = = fmap f (fmap g a)
+              </code>
+            </pre>
+            <p>You can compose functions inside or outside of functors safely</p>
+          </div>
+        </div>
       </section>
       <section class="bg-secondary">
         <h1>Another issue</h1>
@@ -585,6 +630,9 @@
             </pre>
           </div>
         </div>
+      </section>
+      <section class="bg-apple">
+        <h1>We can use it next time!</h1>
       </section>
     </article>
 		<script>

@@ -1,0 +1,624 @@
+<!doctype html>
+<html>
+	<head>
+        <meta charset="utf-8">
+		<link rel="stylesheet" href="/css/svg-icons.css">
+    <link rel="stylesheet" href="/css/webslides.css">
+    <link rel="stylesheet" href="/css/prism.css">
+	</head>
+	<body>
+    <script src="/js/webslides.min.js"></script>
+    <script src="/js/svg-icons.js"></script>
+    <script src="/js/prism.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+        processEscapes: true
+      });
+      </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    <article id="webslides">
+      <section class="bg-apple slide-bottom">
+        <h1>Lesson 5</h1>
+        <h2>Combining and folding</h2>
+      </section>
+      <section class="bg-primary">
+        <h1>Recap</h1>
+        <div class="content">
+          <ul>
+            <li><code>DirectoryEntry</code> can be modified to store a filesystem of <em>anything</em>, not just strings</li>
+            <li><code>DirectoryEntry</code> is a special type called a <code>Functor</code>, which means we can run functions "inside" it</li>
+            <li><code>Functor</code> is a very common typeclass that has <em>Laws</em> so we can use it easily</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Another issue</h1>
+        <div class="content">
+          <ul>
+            <li>We used the <code>Functor</code> on <code>DirectoryEntry</code> to get the word counts for a "filesystem"</li>
+            <li>What if we want to find the <em>total</em> word count?</li>
+            <li>We need some way to <em>combine all elements together</em></li>
+          </ul>
+        </div>
+      </section>
+      <section class="slide-right">
+        <h1>An Analogy</h1>
+        <div class="content">
+          <ul>
+            <li>A while back, we talked about <em>folds</em></li>
+            <li>Folds let you combine all the elements in a list to get one thing</li>
+            <li>Folds can be used to sum up all the numbers in a list</li>
+            <li>Wouldn't it be nice if we could generalize folds?</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-red">
+        <h1>A problem</h1>
+        <div class="content">
+          <ul>
+            <li>There's two folds in Haskell, <code>foldl</code> and <code>foldr</code></li>
+            <li>These fold the list in one direction or the other</li>
+            <li>We'd rather not have to write two things, because we wanna be lazy</li>
+            <li>Maybe we can come up with some general solution instead?</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Going Simple</h1>
+        <ul>
+          <li>We want to combine all the elements in a <em>DirectoryEntry</em> together</li>
+          <li>What do we mean by combining?</li>
+        </ul>
+      </section>
+      <section class="bg-secondary">
+        <h1>Combination "nice to haves"</h1>
+        <div class="content">
+          To make our lives easier, "combining" two things should...
+          <ul>
+            <li>Not change the type, so we can keep combining with more things</li>
+            <li>Always work for any two values of the type</li>
+            <li>Be associative, so we have less things to care about</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h1>What the heck does associative mean?</h1>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                combine (combine a b) c = combine a (combine b c)
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Associative things don't care about parenthesis</li>
+                <li>Associative things <em>might</em> care about order</li>
+                <li>Associative things are just a bit easier to work with</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>What fits this?</h1>
+        <div class="grid horizontal-align">
+          <div class="column">
+            <h3>Adding numbers</h3>
+          </div>
+          <div class="column">
+            <h3>Multiplying numbers</h3>
+          </div>
+          <div class="column">
+            <h3>Appending lists</h3>
+          </div>
+          <div class="column">
+            <h3>Composing functions</h3>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Sounds like a typeclass!</h1>
+      </section>
+      <section>
+        <h1>Okay, what's this actually called?</h1>
+      </section>
+      <section class="bg-primary">
+        <h1>It's called <code>Semigroup!</code></h1>
+      </section>
+      <section class="bg-red">
+        <h1>BUT WHY</h1>
+        <h2>Blame Abstract Algebra</h2>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class Semigroup a where
+                  (&lt;&gt;) :: a -> a -> a
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Semigroup provides the <code>&lt;&gt;</code> operator</li>
+                <li>This lets us combine things, and maintain all the nice properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>To sum or not to multiply?</h1>
+        <div class="content">
+          <ul>
+            <li>In Haskell, each type can implement a class <em>once</em></li>
+            <li>But we have two valid <code>Semigroup</code>s for numbers, one under addition, one under multiplication</li>
+            <li>Which one do we use?</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <h1>Use Neither!</h1>
+        <h2>Use wrapper types instead</h2>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                data Product a = Product a
+                instance (Num a) => Semigroup (Product a) where
+                  (Product a) (&lt;&gt;) (Product b) = Product (a * b)
+
+                getProduct :: Product a -> a
+                getProduct (Product a) = a
+
+                data Sum a = Sum a
+                instance (Num a) => Semigroup (Sum a) where
+                  (Sum a) (&lt;&gt;) (Sum b) = Sum (a + b)
+
+                getSum :: Sum a -> a
+                getSum (Sum a) = a
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Wrapper types let us select the behavior we want</li>
+              <li>Things become a lot easier</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <h1>A deeper idea</h1>
+        <h2>What about identities?</h2>
+      </section>
+      <section class="bg-secondary slide-top">
+        <h1>Doing Nothing</h1>
+        <div class="content">
+          <ul>
+            <li>In math, an "identity" is something that "does nothing"</li>
+            <li>In our case, it would be a value that is "empty", so we can combine it with anything to do nothing</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h1>Examples</h1>
+        <div class="content">
+          <ul>
+            <li>Anything multiplied by 1 is itself</li>
+            <li>Anything summed with 0 is itself</li>
+            <li>Appending an empty list to either end of a list does nothing</li>
+            <li><code>||</code> with <code>False</code> does nothing</li>
+            <li><code>&&</code> with <code>True</code> does nothing</li>
+            <li>Composing functions with the <em>identity function</em> does nothing</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class (Semigroup a) => Monoid a where
+                  mempty :: a -- "monoid empty"
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Monoids (not to be confused with Monads) are things you can combine with an <em>identity</em></li>
+                <li>The identity has some special properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <h1>Left Identity</h1>
+            <pre>
+              <code class="language-haskell">
+                a &lt;&gt; mempty = a
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <h1>Right Identity</h1>
+            <pre>
+              <code class="language-haskell">
+                mempty &lt;&gt; a = a
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Back to the goal</h1>
+        <h2>Combining elements of a Directory</h2>
+      </section>
+      <section class="bg-secondary">
+        <h1>directoryCombine</h1>
+        <div class="content">
+          <ul>
+            <li>Let's write a <code>directoryCombine</code> function, that combines all elements of a directory</li>
+            <li>They need to be <code>Monoid</code> values for that</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: ?
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>What's our signature?</li>
+              <li>We can combine our values if they're a monoid</li>
+              <li>So let's try that</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>There we go! We can combine all the items as long as they're a <em>Monoid</em></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+                directoryCombine (File name val) = ?
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>What do we do with a single file?</li>
+              <li>Well, we basically just need the value out of it</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+                directoryCombine (File _ val) = val
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Easy!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+                directoryCombine (File _ val) = val
+                directoryCombine (Directory _ items) = ?
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>This is trickier...</li>
+              <li>We want to combine all elements of a list together</li>
+              <li>How might we do that?</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+                directoryCombine (File _ val) = val
+                directoryCombine (Directory _ items) = combineItems (map directoryCombine items)
+
+                combineItems :: (Monoid m) => [m] -> m 
+                combineItems = ?
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Well, if we had this helper funciton, life would be easy</li>
+              <li>Just combine all entires, then combine the entries together</li>
+              <li>Maybe some kind soul has written this for us?</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>Building up</h1>
+        <div class="columns vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                directoryCombine :: (Monoid m) => DirectoryEntry m -> m
+                directoryCombine (File _ val) = val
+                directoryCombine (Directory _ items) = mconcat (map directoryCombine items)
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Typing the signature into Hoogle gets us the function <code>mconcat</code></li>
+              <li>Let's use that...</li>
+              <li>And we're done!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="slide-bottom">
+        <h1>Using the value</h1>
+        <div class="content">
+          <ul>
+            <li>With <em>directoryCombine</em>, we can finally get the word counts</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                wordCount :: DirectoryEntry String -> Int
+                wordCount d = getSum (directoryCombine (fmap Sum (fmap length (fmap words d))))
+
+                -- or, shorter
+                wordCount' d = getSum (directoryCombine (fmap (Sum . length . words) d))
+              
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>This is... sort of gross</li>
+              <li>It would be a lot nicer if we could somehow "extract" the notion of "transform then combine"</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>transformCombine</h1>
+          <div class="grid vertical-align marginless">
+            <div class="column">
+              <pre>
+                <code class="language-haskell">
+                  transformCombine :: (Monoid m) => (a -> m) -> DirectoryEntry a -> m
+                  transformCombine f d = directoryCombine (fmap f d)
+                
+                  totalWordCount = transformCombine (Sum . length . words)
+                </code>
+              </pre>
+            </div>
+            <div class="column content">
+              <ul>
+                <li>This looks much nicer!</li>
+                <li>In fact, it's easy to read: transform to the sum of the length of the array of words, then combine the values</li>
+              </ul>
+            </div>
+          </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Typeclass!</h1>
+        <div class="content">
+          <ul>
+            <li>It turns out, "transform all the values, then use <code>Monoid</code> to combine them" is incredibly common</li>
+            <li>So common, in fact, there's a Typeclass for it!</li>
+            <li>Let's explore that a bit now</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Foldable</h1>
+        <div class="columns vertical-align">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class (Foldable f) where
+                  foldMap :: (Mondoid m) => (a -> m) -> f m -> a
+                  -- Many other functions, but you only need to define foldMap
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Foldable is the <em>class of things you can fold</em></li>
+              <li>Basically, containers where you can use <code>Monoid</code> to combine their elements</li>
+              <li>Super, super useful!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <h1>Making DirectoryEntry Foldable</h1>
+        <pre>
+          <code class="language-haskell">
+            instance Foldable DirectoryEntry where
+              foldMap = transformCombine
+          </code>
+        </pre>
+      </section>
+      <section class="bg-apple">
+        <h1>Stuff "for free"</h1>
+        <div class="content">
+          <ul>
+            <li>We implement typeclasses to make abstractions</li>
+            <li>Abstractions imply that we get stuff "for free," or close to it</li>
+            <li>What does foldable give us?</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>List all file contents</h1>
+        <pre>
+          <code class="language-haskell">
+            getFileContents :: DirectoryEntry a -> [a]
+            getFileContents = toList 
+          </code>
+        </pre>
+        <div class="content">
+          We can use the <code>toList</code> function to get a list of file contents, which is useful
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>Get maximum/minimum element</h1>
+        <pre>
+          <code class="language-haskell">
+            maximumFile :: (Ord a) => DirectoryEntry a -> a 
+            maximumFile = maximum 
+
+            minimumFile :: (Ord a) => DirectoryEntry a -> a
+            minimumFile = minimum
+
+            maximumBy :: (a -> a -> Ordering) -> DirectoryEntry a -> a
+            minimumBy :: (a -> a -> Ordering) -> DirectoryEntry a -> a
+
+          </code>
+        </pre>
+        <div class="content">
+          Foldable lets us find the maximum and minimum elements for free, and we can supply our own comparison function
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>Combine boolean values</h1>
+        <pre>
+          <code class="language-haskell">
+            allFiles :: DirectoryEntry Bool -> Bool
+            allFiles = all
+
+            orFiles :: DirectoryEntry Bool -> Bool
+            orFiles = or
+
+            any :: (a -> Bool) -> DirectoryEntry a -> Bool
+            all :: (a -> Bool) -> DirectoryEntry a -> Bool
+          </code>
+        </pre>
+        <div class="content">
+          We can also combine all the elements with or and and, and test if any or all files satisfy a predicate 
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>Get a set of file contents</h1>
+        <pre>
+          <code class="language-haskell">
+            import qualified Data.Set as Set
+
+            fileContents :: (Ord a) => DirectoryEntry a -> Set.Set a
+            fileContents = foldMap (Set.singleton)
+          </code>
+        </pre>
+        <div class="content">
+          We can get a set of all the contents in our filesystem
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>Find elements with a predicate</h1>
+        <pre>
+          <code class="language-haskell">
+            find :: (a -> Bool) -> DirectoryEntry a -> Maybe a
+          </code>
+        </pre>
+        <div class="content">
+          We can find the first file contents that satisfies a predicate 
+        </div>
+      </section>
+      <section class="bg-primary slide-right">
+        <h1>See if a directory contains a file or not</h1>
+        <pre>
+          <code class="language-haskell">
+            elem :: (Eq a) => a -> DirectoryEntry a -> Bool
+            notElem :: (Eq a) => a -> DirectoryEntry a -> Bool
+          </code>
+        </pre>
+        <div class="content">
+          We can see if we have a file with the given contents or not
+        </div>
+      </section>
+      <section class="bg-red">
+        <h1>That's a lot of stuff!</h1>
+      </section>
+      <section class="bg-secondary">
+        <h1>Moral of the story</h1>
+        <div class="contents">
+          <ul>
+            <li>Haskell lets you define things that are very <em>general</em></li>
+            <li>This lets you get a bunch of useful stuff "for free."</li>
+            <li>Take a big initial investment to learn, and get lots of gains later on!</li>
+          </ul>
+        </div>
+      </section>
+    </article>
+		<script>
+			window.ws = new WebSlides()
+		</script>
+	</body>
+</html>
