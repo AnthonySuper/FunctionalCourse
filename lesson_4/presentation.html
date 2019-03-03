@@ -373,6 +373,219 @@
           </p>
         </div>
       </section>
+      <section class="bg-secondary">
+        <h1>Exercise</h1>
+        <pre>
+          <code class="language-haskell">
+            instance Functor DirectoryEntry where
+              fmap = directoryMap
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary">
+        <h1>An example usage</h1>
+        <div class="content">
+          <ul>
+            <li>We have a <code>DirectoryEntry</code> full of text files</li>
+            <li>We want to get a <code>DirectoryEntry</code> of their lengths</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>An example usage</h1>
+        <pre>
+          <code class="language-haskell">
+            toLengths :: DirectoryEntry String -> DirectoryEntry Int
+            toLengths dr = fmap length dr
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary">
+        <h1>More compact</h1>
+        <pre>
+          <code class="language-haskell">
+            toLengths :: DirectoryEntry String -> DirectoryEntry Int
+            toLengths = fmap length
+          </code>
+        </pre>
+      </section>
+      <section class="bg-secondary">
+        <h1>Another issue</h1>
+        <div class="content">
+          <ul>
+            <li>What if we want to find the <em>total</em> word count?</li>
+            <li>We need some way to <em>combine all elements together</em></li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-secondary">
+        <h1>Combinations</h1>
+        <pre><code class="language-haskell">
+          combiner :: a -> a -> a
+        </code></pre>
+      </section>
+      <section class="bg-secondary">
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                type Combiner a = a -> a -> a
+                
+                add :: Combiner Int
+                add a b = a + b
+
+                multiply :: Combiner Int
+                multiply a b = a + b
+                
+                append :: Combiner [a]
+                append a b = a ++ b
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Combiners <em>do not change type</em></li>
+                <li>Combiners <em>have two arguments</em></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1>That sounds like laws!</h1>
+        <div class="content">
+          <ul>
+            <li>Whenever we can generalize, we want to</li>
+            <li>So, let's try to make a typeclass for this!</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h1>The class</h1>
+        <pre><code class="language-haskell">
+          class Combinable a where
+            combine :: a -> a -> a
+
+          instance Combinable [a] where
+            combine = (++)
+          -- What about ints?
+          -- How the heck do we do them?
+        </code></pre>
+      </section>
+      <section>
+        <h1>Trouble in paradise</h1>
+        <ul>
+          <li>We can combine ints in two ways: addition or multiplication</li>
+          <li>Maybe it's best to allow users to use <em>both?</em></li>
+        </ul>
+      </section>
+      <section>
+        <pre><code class="language-haskell">
+          data Product a = Product a
+            deriving (Show, Read, Eq, Ord)
+
+          data Sum a = Sum a
+            deriving (Show, Read, Eq, Ord)
+
+          instance (Num a) => Combinable (Product a) where
+            combine (Product a) (Product b) = Product (a * b)
+
+          instance (Num a) => Combinable (Sum a) where
+            combine (Sum a) (Sum b) = Sum (a + b)
+        </code></pre>
+      </section>
+      <section>
+        <h1>Okay, what's this actually called?</h1>
+      </section>
+      <section class="bg-primary">
+        <h1>It's called <code>Semigroup!</code></h1>
+      </section>
+      <section class="bg-red">
+        <h1>BUT WHY</h1>
+        <h2>Blame Abstract Algebra</h2>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class Semigroup a where
+                  (&lt;&gt;) :: a -> a -> a
+                  
+                instance (Num a) => Semigroup (Product a) where
+                  (Product a) &lt;&gt; (Product b) = Product (a * b)
+                
+                instance (Num a) => Semigroup (Sum a) where
+                  (Sum a) &lt;&gt; (Sum b) = Sum (a + b)
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Semigroup provides the <code>&lt;&gt;</code> operator</li>
+                <li>Equivalent of <code>combine</code> from before</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <h1>A deeper idea</h1>
+        <h2>What about identities?</h2>
+      </section>
+      <section>
+        <div class="content">
+          <ul>
+            <li>Anything multiplied by 1 is itself</li>
+            <li>Anything summed with 0 is itself</li>
+            <li>Appending an empty list to either end of a list does nothing</li>
+            <li><code>||</code> with <code>False</code> does nothing</li>
+            <li><code>&&</code> with <code>True</code> does nothing</li>
+          </ul>
+        </div>
+      </section>
+      <section class="bg-primary">
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <pre>
+              <code class="language-haskell">
+                class (Semigroup a) => Monoid a where
+                  mempty :: a
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <div class="content">
+              <ul>
+                <li>Monoids (not to be confused with Monads) are things you can combine with an <em>identity</em></li>
+                <li>The identity has some special properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="grid vertical-align marginless">
+          <div class="column">
+            <h1>Left Identity</h1>
+            <pre>
+              <code class="language-haskell">
+                a &lt;&gt; mempty = a
+              </code>
+            </pre>
+          </div>
+          <div class="column">
+            <h1>Right Identity</h1>
+            <pre>
+              <code class="language-haskell">
+                mempty &lt;&gt; a = a
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
     </article>
 		<script>
 			window.ws = new WebSlides()
