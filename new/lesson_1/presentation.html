@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Lesson 1</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/reveal.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/theme/black.min.css"></link>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/solarized_dark.css">
+  </head>
+  <body>
+    <div class="reveal">
+      <section class="slides">
+        <section>
+          <h1>A Brief Review</h1>
+          <p>Or, how I learned to stop worrying and love the summary</p>
+        </section>
+        <section>
+          <h4>First off: Functions</h4>
+          <pre><code class="haskell" data-trim>
+          addTwo :: Int -&gt; Int 
+          addTwo a = a + 2
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          -- function name first
+          addTwo :: Int -&gt; Int 
+          --     ^ start of type signature 
+          addTwo a = a + 2
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          addTwo :: Int -&gt; Int 
+          --        ^ Argument is an integer
+          addTwo a = a + 2
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          addTwo :: Int -&gt; Int 
+          --               ^ Returns an integer
+          addTwo a = a + 2
+          </code></pre>
+        </section>
+        <section>
+
+          <h4>Functions are Curried</h4>
+          <pre><code class="haskell" data-trim>
+          multiplyTogether :: Int -> Int -> Int 
+          multiplyTogether a b = a * b 
+
+          -- can be translated to 
+          multiplyTogether' :: Int -> (Int -> Int) 
+          multiplyTogether' a = let inner b = a * b in inner 
+          </code></pre>
+        </section>
+        <section>
+
+          <h4>Function Currying is Automatic</h4>
+          <pre><code class="haskell" data-trim>
+          multiplyTogether :: Int -> (Int -> Int)
+          multiplyTogether a b = a * b 
+
+          multiplyByFour :: Int -> Int 
+          multiplyByFour = multiplyToghether 4
+          </code></pre>
+        </section>
+        <section>
+          <h3>Data Types</h3>
+          <pre><code class="haskell" data-trim>
+          data Foo = Foo Int
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data Foo = Foo Int
+          --   ^ type name
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data Foo = Foo Int
+          --         ^ Constructor
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data Foo = Foo Int
+          --             ^ Types contained 
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data Foo = Foo Int
+
+          myFoo :: Foo 
+          myFoo = Foo 10 
+
+          isInnerZero :: Foo -> Bool
+          isInnerZero (Foo a) = a == 0
+          --           ^ Pattern matching on constructor
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data FooBar = Foo Int | Bar Int 
+          --                 ^ SUM type, EITHER one OR the other
+
+          myFoo :: FooBar
+          myFoo = Foo 10 
+
+          myBar :: FooBar 
+          myBar = Bar 10 
+
+          isInnerZero :: FooBar -> Bool 
+          isInnerZero (Foo 0) = True 
+          --           ^ Pattern-match again 
+          isInnerZero (Bar 0) = True 
+          isInnerZero _ = False 
+
+          </code></pre>
+        </section>
+        <section>
+          <h3>Higher-Kinded Types</h3>
+          <p>Types can take other types as arguments:</p>
+          <pre><code class="haskell" data-trim>
+          data Maybe a = Just a | Nothing 
+
+          unwrapOr :: a -> Maybe a -> a 
+          unwrapOr _ (Just val) = val 
+          unwrapOr a Nothing = a
+
+          myNothing :: Maybe Int 
+          myNothing = Nothing 
+
+          myNothing' :: Maybe Bool 
+          myNothing' = Nothing
+          </code></pre>
+        </section>
+        <section>
+          <p>Functions can be generic</p>
+          <pre><code class="haskell" data-trim>
+          data Maybe a = Just a | Nothing 
+
+          myMap :: (a -> b) -> Maybe a -> Maybe b 
+          myMap _ Nothing = Nothing
+          myMap f (Just a) = Just (f a)
+          </code></pre>
+        </section>
+        <section>
+          <pre><code class="haskell" data-trim>
+          data Maybe a = Just a | Nothing 
+
+          liftTwoArg :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c 
+          liftTwoArg f (Just a) (Just b) = Just (f a b)
+          liftTwoArg _ _ _ = Nothing 
+
+          curried :: (a -> b -> c) -> (Maybe a -> Maybe b -> Maybe c)
+          curried' = liftTwoArg
+          </code></pre>
+        </section>
+      </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/js/reveal.min.js"></script>
+    <script src="/js/revealinit.js" type="module"></script>
+  </body>
+</html>
+
